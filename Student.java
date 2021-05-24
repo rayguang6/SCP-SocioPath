@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package s2assignment;
+package GUItesting;
 
 import java.util.ArrayList;
+import s2assignment.*;
 import java.util.Random;
 
 /**
@@ -20,8 +21,9 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
    int lunchPeriod; //feature 3
    int outdeg;
    int indeg; 
-   Edge<T,N> firstFriend; 
+   Edge<T,N> firstFriend; //this is to show weight
    Student<T,N> nextVertex;
+   ArrayList<T> friendList; //this is to show friend list only
    Random r=new Random(); 
    
    public Student() {
@@ -39,6 +41,8 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
       if(reputation==0) reputation=1;
       lunchStart = setTime();
       lunchPeriod = r.nextInt(55)+5;
+      friendList = new ArrayList<>();
+      friendList.add(vInfo);
    }	
    
     public int setTime(){
@@ -48,11 +52,12 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
         }
         return temp;
     }
-    
 
     @Override
     public String toString() {
-        return vertexInfo + "(Reputation : " + reputation + "| Diving rate : " + divingrate + "| Lunch Start Time : " + lunchStart + "| Lunch Period : " + lunchPeriod + ')';
+        return vertexInfo + "(Reputation : " + reputation + "| Diving rate : " + divingrate + 
+                "| Lunch Start Time : " + lunchStart + "| Lunch Period : " + lunchPeriod + 
+                "| Friend List : "+friendList.toString();
     }
 
     @Override

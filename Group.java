@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package s2assignment;
+package GUItesting;
 
+import s2assignment.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -58,7 +59,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                         sourceV.firstFriend = newFriend;
                         sourceV.outdeg++;
                         destV.indeg++;
-//                        sourceV.addFriend(destination);
+                        sourceV.friendList.add(destination);
                         return true;
                     }
                     destV = destV.nextVertex;
@@ -68,6 +69,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         }
         return false;
     }
+    
 
     public void printAllStudentProfile(){
         Student<T,N> temp=head;
@@ -75,6 +77,18 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             System.out.println(temp.toString());
             temp=temp.nextVertex;
         }
+    }
+    
+    //for jFrame
+    public String printAll(){
+        Student<T,N> temp=head;
+        String str="<html>";
+        while(temp!=null){
+            str=str+temp.toString()+"<BR>";
+            temp=temp.nextVertex;
+        }
+        str=str+"</html>";
+        return str;
     }
     
     public boolean hasStudent(T v) {
@@ -134,6 +148,42 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             }
             temp=temp.nextVertex;
         }
+//        while (endTime != null) {
+//            System.out.print("# " + endTime.vertexInfo + " : ");
+//            Edge<T, N> currentEdge = endTime.firstFriend;
+//            while (currentEdge != null) {
+//                System.out.print("[" + endTime.vertexInfo + "-" + currentEdge.toVertex.vertexInfo + ": "+currentEdge.rep+"]");
+//                currentEdge = currentEdge.nextEdge;
+//            }
+//            System.out.println();
+//            endTime = endTime.nextVertex;
+//        }
+    }
+    
+    public String printResult(T v) { //print friends of one with rep point
+        String str="";
+        Student<T, N> temp = head;
+        while(temp!=null){
+            if(temp.vertexInfo.equals(v)){
+                Edge<T,N> [] list= new Edge[temp.outdeg];
+                Edge<T, N> currentEdge = temp.firstFriend;
+                int i=0;
+                while(currentEdge!=null){
+                    list[i]=currentEdge;
+                    currentEdge=currentEdge.nextEdge;
+                    i++;
+                }
+                Arrays.sort(list);
+                str=str+"#"+temp.vertexInfo+" : ";
+                for(int j=0; j<list.length; j++){
+                    str=str+"["+list[j].toVertex.vertexInfo + ": "+list[j].rep+"]";
+                }
+                str=str+"\n";
+                break;
+            }
+            temp=temp.nextVertex;
+        }
+        return str;
     }
 
     public T getVertex(int pos) {
@@ -151,7 +201,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         if (!hasStudent(v)) {
             return null;
         }
-        ArrayList<T> list = new ArrayList<T>();
+        ArrayList<T> list = new ArrayList<>();
         Student<T, N> temp = head;
         while (temp != null) {
             if (temp.vertexInfo.compareTo(v) == 0) {
@@ -267,7 +317,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
     public int findEdge(T source, T destination){
         Student<T, N> sourceV = head;
         int weight=0;
-        //get rep point for talker-rumor
         while(sourceV!=null){
             if (sourceV.vertexInfo.equals(source)) {
                 Edge<T,N> temp=sourceV.firstFriend;
@@ -300,7 +349,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         Arrays.sort(ary);
         ArrayList<Integer> start = new ArrayList<>();
         ArrayList<Integer> end = new ArrayList<>();
-        ArrayList<T> people = new ArrayList<>();
         for(int i=0; i<ary.length; i++){
             //calculate endTime
             int endTime, endMinute;
@@ -315,7 +363,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             if(start.isEmpty()){
                 start.add(ary[i].lunchStart);
                 end.add(endTime);
-                people.add(ary[i].vertexInfo);
             }else{
                 //compare got clash or not
                 boolean clash=false;
@@ -333,7 +380,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                 if(!clash){
                     start.add(ary[i].lunchStart);
                     end.add(endTime);
-                    people.add(ary[i].vertexInfo);
                 }
             }
             //printing for checking (each observant eating start time - period - end time)
@@ -341,11 +387,72 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         }
         System.out.println("");
         //printing the lunch time plan
-        System.out.println("Lunch Schedule: ");
-        System.out.println(people.toString());
         System.out.println(start.toString());
         System.out.println(end.toString());
         //how much people he can have lunch with
         System.out.println(start.size());
+    }
+    
+    public String Lunch(int[] student){ //for GUI
+        String str="<html> Observant lunch time: <BR>";
+        Student<T, N>[] ary=new Student[student.length];
+        //inseting students into a list
+        for(int i=0; i<student.length; i++){
+            Student<T, N> sourceV = head;
+            while(sourceV!=null){
+                if (sourceV.vertexInfo.equals(student[i])) {
+                    ary[i]=sourceV;
+                }
+                sourceV=sourceV.nextVertex;
+            }
+        }
+        //sort accroding priority, less time used will be priotized, first observed has least time
+        Arrays.sort(ary);
+        ArrayList<Integer> start = new ArrayList<>();
+        ArrayList<Integer> end = new ArrayList<>();
+        ArrayList<T> people = new ArrayList<>();
+        for(int i=0; i<ary.length; i++){
+            //calculate endTime
+            int endTime, endMinute;
+            endMinute=ary[i].lunchStart%100+ary[i].lunchPeriod;
+            if(endMinute>=60){
+                endTime=ary[i].lunchStart/100 * 100;
+                endTime=endTime+(endMinute-60)+100;
+            }else{
+                endTime=ary[i].lunchStart/100 * 100 +endMinute;
+            }
+            //if the student didn't plan to eat with people yet, the first he observed will be the first target
+            if(start.isEmpty()){
+                people.add(ary[i].vertexInfo);
+                start.add(ary[i].lunchStart);
+                end.add(endTime);
+            }else{
+                //compare got clash or not
+                boolean clash=false;
+                for(int j=0; j<start.size(); j++){
+                    int ListStart=start.get(j);
+                    int ListEnd=end.get(j);
+                    if(ary[i].lunchStart>=ListStart && ary[i].lunchStart<=ListEnd || //listStart----start------listEnd
+                            endTime>=ListStart && endTime<=ListEnd || //listStart-----end------listEnd
+                            ary[i].lunchStart<=ListStart && endTime>=ListEnd){ //start----ListStart----ListEnd----end
+                        clash=true;
+                        break;
+                    }
+                }
+                //if no clash, he can have lunch with that person
+                if(!clash){
+                    people.add(ary[i].vertexInfo);
+                    start.add(ary[i].lunchStart);
+                    end.add(endTime);
+                }
+            }
+            //printing for checking (each observant eating start time - period - end time)
+            str=str+ary[i].lunchStart+" "+ary[i].lunchPeriod+" "+endTime+" | ";
+        }
+        //printing the lunch time plan
+        str=str+"<BR> Schedule to eat with people: <BR>"+people.toString()+"<BR>"+start.toString()+"<BR>"+end.toString()+"<BR>";
+        //how much people he can have lunch with
+        str=str+start.size()+"</html>";
+        return str;
     }
 }
