@@ -44,8 +44,9 @@ public class main {
         while(input!=-1){
             switch(input){
                 case 1:
-//                    g1.teachStrager(1, 2, true);
-//                    g1.teachStrager(4, 2, false);
+                    //test case:
+                    //g1.teachStrager(1, 2, true);
+                    //g1.teachStrager(4, 2, false);
                     System.out.println("Who is teaching?");
                     int mentor=sc.nextInt();
                     System.out.println("Who is being teached?");
@@ -59,8 +60,8 @@ public class main {
                     g1.printEdges(mentee);
                     break;
                 case 2:
-                    // 7 2 1 (already known)
-                    // 10 2 9 (stranger)
+                    //test case: 
+                    // 1 2 7 (stranger)
                     // 7 2 5 (invalid person)
                     System.out.println("Who is talking?");
                     int talk =sc.nextInt();
@@ -92,6 +93,7 @@ public class main {
                     g1.haveLunch(list);
                     break;
                 case 4:
+                    //test case: 13 16 17 12 15
                     System.out.println("Insert number of books: ");
                     int size=sc.nextInt();
                     int[] line=new int[size];
