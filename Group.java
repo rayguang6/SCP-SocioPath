@@ -188,30 +188,15 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         if (!hasStudent(mentor) || !hasStudent(mentee)) {
             return false;
         }
+        //if they are friend, not stranger, action cannot be done
+        if(findEdge(mentor, mentee)>0) return false;
         Student<T, N> sourceV = head;
         while (sourceV != null) {
             if (sourceV.vertexInfo.equals(mentee)) {
-                Edge<T, N> temp = sourceV.firstFriend;
-                boolean found=false;
-                while (temp != null) { //while loop to check whether they are frens or not
-                    //if 他们已经是朋友了， rep point modified
-                    if (temp.toVertex.vertexInfo.equals(mentor)) {
-                        if(good){
-                            temp.addRep(10);
-                        }else{
-                            temp.addRep(2);
-                        }
-                        found=true;
-                    }
-                    temp = temp.nextEdge;
-                }
-                //if 他们本来不是朋友， 他们现在就变朋友
-                if(found==false){
-                    if(good){
-                        addEdge(mentee, mentor, 10);
-                    }else{
-                        addEdge(mentee, mentor, 2);
-                    }
+                if(good){
+                    addEdge(mentee, mentor, 10);
+                }else{
+                    addEdge(mentee, mentor, 2);
                 }
                 return true;
             }
@@ -284,7 +269,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         return weight;
     }
     
-    public void haveLunch(int[] student){ //feature 3
+    public void haveLunch(int[] student){ //feature 3 （1-
         Student<T, N>[] ary=new Student[student.length];
         //inseting students into a list
         for(int i=0; i<student.length; i++){
@@ -347,5 +332,77 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         System.out.println(end.toString());
         //how much people he can have lunch with
         System.out.println(start.size());
+    }
+    
+    public void haveLunch(int[] student){ //feature 3 (EXTRA FEATURE: up to 3 people)
+        Student<T, N>[] ary=new Student[student.length];
+        //inseting students into a list
+        for(int i=0; i<student.length; i++){
+            Student<T, N> sourceV = head;
+            while(sourceV!=null){
+                if (sourceV.vertexInfo.equals(student[i])) {
+                    ary[i]=sourceV;
+                }
+                sourceV=sourceV.nextVertex;
+            }
+        }
+        //sort accroding priority, less time used will be priotized, first observed has least time
+        Arrays.sort(ary);
+        //ArrayList indicates the schedule plan with who, start time and end time
+        ArrayList<Integer> start = new ArrayList<>();
+        ArrayList<Integer> end = new ArrayList<>();
+        ArrayList<T> people = new ArrayList<>();
+        //we have 1100-1500 eatiing slot, total of 60*4+1=241 minutes , time_slot in minutes value
+        int[] time_slot=new int[241];
+        for(int i=0; i<ary.length; i++){
+            //calculate endTime
+            int endTime, endMinute;
+            endMinute=ary[i].lunchStart%100+ary[i].lunchPeriod;
+            if(endMinute>=60){
+                endTime=ary[i].lunchStart/100 * 100;
+                endTime=endTime+(endMinute-60)+100;
+            }else{
+                endTime=ary[i].lunchStart/100 * 100 +endMinute;
+            }
+            //calculating slot in minutes value 
+            int start_slot=ary[i].lunchStart%100;
+            if(ary[i].lunchStart/100==12){
+                start_slot=start_slot+60;
+            }else if(ary[i].lunchStart/100==13){
+                start_slot=start_slot+120;
+            }
+            //compare with array, to check whether the table is full or not
+            //example of array: 00000111110000002222223333332222200000000
+            //5th-10th minute got 1 people, 2 indicates 2 people on table on that particular time, and so on.
+            boolean full=false; //the table will be full when there are already 3 people there
+            for(int ss=start_slot; ss<start_slot+ary[i].lunchPeriod; ss++){
+                if(time_slot[ss]>=3){
+                    full=true;
+                    break;
+                }
+            }
+            //if the table is not full with 3 people yet, they can eat with them
+            if(!full){
+                start.add(ary[i].lunchStart);
+                end.add(endTime);
+                people.add(ary[i].vertexInfo);
+                for(int s=start_slot; s<start_slot+ary[i].lunchPeriod; s++){
+                    time_slot[s]=time_slot[s]+1;
+                }
+            }
+            //to display value for checking purpose only
+            System.out.println("["+ary[i].vertexInfo+"]"+ary[i].lunchStart+" "+ary[i].lunchPeriod+" "+endTime);
+            for(int t=0; t<time_slot.length; t++){
+                    System.out.print(time_slot[t]);
+            }
+            System.out.println("");
+        }
+        //printing the lunch time plan
+        System.out.println("Lunch Schedule: ");
+        System.out.println(people.toString());
+        System.out.println(start.toString());
+        System.out.println(end.toString());
+        //how much people he can have lunch with
+        System.out.println("Total people: "+start.size());
     }
 }
