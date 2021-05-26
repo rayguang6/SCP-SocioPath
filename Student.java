@@ -49,10 +49,13 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
    }	
    
     public int setTime(){
-        int temp=r.nextInt(180)+1100;
-        if(temp%100>=60){
+        int min=r.nextInt(181);
+        int temp=1100;
+        while(min>=60){
             temp=temp+100-60;
+            min=min-60;
         }
+        temp=temp+min;
         return temp;
     }
 	
