@@ -279,11 +279,9 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                 if (sourceV.vertexInfo.equals(student[i])) {
                     //calculating average lunch period and end time
                     sourceV.calculateAverage();
-                    sourceV.calculateEnd();
                     ary[i]=sourceV;
                 }else if(sourceV.vertexInfo.equals(me)){
                     sourceV.calculateAverage();
-                    sourceV.calculateEnd();
                     ME=sourceV;
                 }
                 sourceV=sourceV.nextVertex;
