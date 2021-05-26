@@ -82,6 +82,8 @@ public class main {
                     g1.printEdges(listen);
                     break;
                 case 3:
+                    System.out.println("Who are you?");
+                    int observe=sc.nextInt();
                     System.out.println("Insert number of people you want to observe.");
                     int counter=sc.nextInt();
                     int[] list= new int[counter];
@@ -90,7 +92,7 @@ public class main {
                         int observant=sc.nextInt();
                         list[i]=observant;
                     }
-                    g1.haveLunch(list);
+                    g1.haveLunch(list, observe);
                     break;
                 case 4:
                     //test case: 13 16 17 12 15
