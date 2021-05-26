@@ -249,10 +249,10 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         return false;
     }
     
+    //method to get relative rep points from A to B
     public int findEdge(T source, T destination){
         Student<T, N> sourceV = head;
         int weight=0;
-        //get rep point for talker-rumor
         while(sourceV!=null){
             if (sourceV.vertexInfo.equals(source)) {
                 Edge<T,N> temp=sourceV.firstFriend;
@@ -269,140 +269,104 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         return weight;
     }
     
-    public void haveLunch(int[] student){ //feature 3 （1-
+    public void haveLunch(int[] student, T me){ // updated feature 3: PARALLEL FARMING
         Student<T, N>[] ary=new Student[student.length];
+        Student<T, N> ME=new Student<>();
         //inseting students into a list
         for(int i=0; i<student.length; i++){
             Student<T, N> sourceV = head;
             while(sourceV!=null){
                 if (sourceV.vertexInfo.equals(student[i])) {
+                    //calculating average lunch period and end time
+                    sourceV.calculateAverage();
+                    sourceV.calculateEnd();
                     ary[i]=sourceV;
+                }else if(sourceV.vertexInfo.equals(me)){
+                    sourceV.calculateAverage();
+                    sourceV.calculateEnd();
+                    ME=sourceV;
                 }
                 sourceV=sourceV.nextVertex;
             }
         }
-        //sort accroding priority, less time used will be priotized, first observed has least time
+        //sort accroding priority, who will finished their lunch earlier will have higher priority
         Arrays.sort(ary);
-        ArrayList<Integer> start = new ArrayList<>();
-        ArrayList<Integer> end = new ArrayList<>();
+        //ArrayList indicates the schedule plan to have lunch with who
         ArrayList<T> people = new ArrayList<>();
+        //declare an array with minutes value of the observant each index indicates each minute
+        int[] time_slot=new int[ME.average_lunchPeriod];
+        //calculate my minute value of start time and end time
+        int my_start_min=calcMin(ME.average_lunchStart);
+        int my_end_min= calcMin(ME.end_time);
+        //print my eating time
+        System.out.println("My eating time : "+ME.average_lunchStart+" "+ME.average_lunchPeriod+" "+ME.end_time);
+        //go for loop to check every individual time of eating 
+        System.out.println("[people]starting time--period---end time");
         for(int i=0; i<ary.length; i++){
-            //calculate endTime
-            int endTime, endMinute;
-            endMinute=ary[i].lunchStart%100+ary[i].lunchPeriod;
-            if(endMinute>=60){
-                endTime=ary[i].lunchStart/100 * 100;
-                endTime=endTime+(endMinute-60)+100;
-            }else{
-                endTime=ary[i].lunchStart/100 * 100 +endMinute;
-            }
-            //if the student didn't plan to eat with people yet, the first he observed will be the first target
-            if(start.isEmpty()){
-                start.add(ary[i].lunchStart);
-                end.add(endTime);
-                people.add(ary[i].vertexInfo);
-            }else{
-                //compare got clash or not
-                boolean clash=false;
-                for(int j=0; j<start.size(); j++){
-                    int ListStart=start.get(j);
-                    int ListEnd=end.get(j);
-                    if(ary[i].lunchStart>=ListStart && ary[i].lunchStart<=ListEnd || //listStart----start------listEnd
-                            endTime>=ListStart && endTime<=ListEnd || //listStart-----end------listEnd
-                            ary[i].lunchStart<=ListStart && endTime>=ListEnd){ //start----ListStart----ListEnd----end
-                        clash=true;
+            //calculate their minute value of eating time
+            int start_min=calcMin(ary[i].average_lunchStart);
+            int end_min=calcMin(ary[i].end_time);
+            //check is there intersection on observant and observer time of eating
+            /* CONDITION: 
+            his_start---mystart----his_end----myend 
+            mystart---his_start---myend---his_end 
+            his_start--mystart---myend---his_end 
+            */
+            if(end_min >= my_start_min && end_min <= my_end_min 
+                    || start_min >= my_start_min && start_min <= my_end_min
+                    || start_min<=my_start_min && end_min>=my_end_min){
+                //compare with array, to check whether the table is full or not
+                boolean full=false;
+                for(int ss=0; ss<ME.average_lunchPeriod; ss++){
+                    if(time_slot[ss]>=3){
+                        full=true;
                         break;
                     }
                 }
-                //if no clash, he can have lunch with that person
-                if(!clash){
-                    start.add(ary[i].lunchStart);
-                    end.add(endTime);
+                //if the table is not full with 3 people yet, I can eat with them
+                if(!full){
                     people.add(ary[i].vertexInfo);
-                }
-            }
-            //printing for checking (each observant eating start time - period - end time)
-            System.out.print(ary[i].lunchStart+" "+ary[i].lunchPeriod+" "+endTime+" | ");
-        }
-        System.out.println("");
-        //printing the lunch time plan
-        System.out.println("Lunch Schedule: ");
-        System.out.println(people.toString());
-        System.out.println(start.toString());
-        System.out.println(end.toString());
-        //how much people he can have lunch with
-        System.out.println(start.size());
-    }
-    
-    public void haveLunch(int[] student){ //feature 3 (EXTRA FEATURE: up to 3 people)
-        Student<T, N>[] ary=new Student[student.length];
-        //inseting students into a list
-        for(int i=0; i<student.length; i++){
-            Student<T, N> sourceV = head;
-            while(sourceV!=null){
-                if (sourceV.vertexInfo.equals(student[i])) {
-                    ary[i]=sourceV;
-                }
-                sourceV=sourceV.nextVertex;
-            }
-        }
-        //sort accroding priority, less time used will be priotized, first observed has least time
-        Arrays.sort(ary);
-        //ArrayList indicates the schedule plan with who, start time and end time
-        ArrayList<Integer> start = new ArrayList<>();
-        ArrayList<Integer> end = new ArrayList<>();
-        ArrayList<T> people = new ArrayList<>();
-        //we have 1100-1500 eatiing slot, total of 60*4+1=241 minutes , time_slot in minutes value
-        int[] time_slot=new int[241];
-        for(int i=0; i<ary.length; i++){
-            //calculate endTime
-            int endTime, endMinute;
-            endMinute=ary[i].lunchStart%100+ary[i].lunchPeriod;
-            if(endMinute>=60){
-                endTime=ary[i].lunchStart/100 * 100;
-                endTime=endTime+(endMinute-60)+100;
-            }else{
-                endTime=ary[i].lunchStart/100 * 100 +endMinute;
-            }
-            //calculating slot in minutes value 
-            int start_slot=ary[i].lunchStart%100;
-            if(ary[i].lunchStart/100==12){
-                start_slot=start_slot+60;
-            }else if(ary[i].lunchStart/100==13){
-                start_slot=start_slot+120;
-            }
-            //compare with array, to check whether the table is full or not
-            //example of array: 00000111110000002222223333332222200000000
-            //5th-10th minute got 1 people, 2 indicates 2 people on table on that particular time, and so on.
-            boolean full=false; //the table will be full when there are already 3 people there
-            for(int ss=start_slot; ss<start_slot+ary[i].lunchPeriod; ss++){
-                if(time_slot[ss]>=3){
-                    full=true;
-                    break;
-                }
-            }
-            //if the table is not full with 3 people yet, they can eat with them
-            if(!full){
-                start.add(ary[i].lunchStart);
-                end.add(endTime);
-                people.add(ary[i].vertexInfo);
-                for(int s=start_slot; s<start_slot+ary[i].lunchPeriod; s++){
-                    time_slot[s]=time_slot[s]+1;
+                    /*
+                    the value on each index of time_slot indicates the number of people on table on that minute, +1 to add people to the table
+                    eg. my starting time is 1312, index 0 indicates the first minute of my eating time (1312-1313) 
+                    if student start before my eating time, addition start from index 0 until the time he finished his lunch
+                    if student start after my eating time, subtraction needed to compare his start eating time with my starting time
+                    */
+                    int temp=0;
+                    if(start_min>=my_start_min){
+                        temp=start_min-my_start_min;
+                    }
+                    for(int s=temp; s<end_min-my_start_min; s++){
+                        if(s>=time_slot.length){
+                            break;
+                        }
+                        time_slot[s]=time_slot[s]+1;
+                    }
                 }
             }
             //to display value for checking purpose only
-            System.out.println("["+ary[i].vertexInfo+"]"+ary[i].lunchStart+" "+ary[i].lunchPeriod+" "+endTime);
+            System.out.println("["+ary[i].vertexInfo+"]"+ary[i].average_lunchStart+" "+ary[i].average_lunchPeriod+" "+ary[i].end_time);
             for(int t=0; t<time_slot.length; t++){
-                    System.out.print(time_slot[t]);
+                System.out.print(time_slot[t]);
             }
             System.out.println("");
         }
         //printing the lunch time plan
-        System.out.println("Lunch Schedule: ");
+        System.out.println("Target Lunch Partner: ");
         System.out.println(people.toString());
-        System.out.println(start.toString());
-        System.out.println(end.toString());
-        //how much people he can have lunch with
-        System.out.println("Total people: "+start.size());
+        System.out.println("Total target: "+people.size());
+    }
+    
+    //method to calculate the minute value of student lunch time
+    public int calcMin(int time){
+        int min=time%100;
+        if(time/100==12){
+            min=min+60;
+        }else if(time/100==13){
+            min=min+120;
+        }else if(time/100==14){
+            min=180;
+        }
+        return min;
     }
 }
