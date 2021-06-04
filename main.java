@@ -107,6 +107,18 @@ public class main {
                     break;
                 case 5:
                 case 6:
+                    System.out.println("Input: ");
+                    int num = sc.nextInt();
+                    Friendship f = new Friendship(num+1);
+                    for(int i=0; i<num; i++){
+                        f.addEdge(sc.nextInt(), sc.nextInt());
+                    }
+                    System.out.println("\nYou can form the following friendship :\n");
+                    ArrayList<FrienshipList> result=f.Pathlist(1);
+                    Collections.sort(result); //to sort from shortest distance to longest distance
+                    for(int i=1; i<=result.size(); i++){
+                        System.out.println(i+". "+result.get(i-1));
+                    }
                 case 7:
                     System.out.println("-----list with rep points-----");
                     g1.printEdges();
