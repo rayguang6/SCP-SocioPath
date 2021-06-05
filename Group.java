@@ -40,7 +40,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         }
     }
 
-    public boolean addEdge(T source, T destination, int rep) {
+    public boolean addEdge(T source, T destination, int rep, boolean friend) {
         if (head == null) {
             return false;
         }
@@ -58,7 +58,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                         sourceV.firstFriend = newFriend;
                         sourceV.outdeg++;
                         destV.indeg++;
-//                        sourceV.addFriend(destination);
+                        if(friend) sourceV.friendList.add(destination);
                         return true;
                     }
                     destV = destV.nextVertex;
@@ -105,7 +105,10 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             Arrays.sort(list); //sort according their rep point
             System.out.print("#"+temp.vertexInfo+" : ");
             for(int j=0; j<list.length; j++){
-                System.out.print("["+list[j].toVertex.vertexInfo + ": "+list[j].rep+"]");
+                System.out.print("[");
+                if(temp.friendList.contains(list[j].toVertex.vertexInfo)) System.out.print("Friend: ");
+                else System.out.print("Stranger: ");
+                System.out.print(list[j].toVertex.vertexInfo + ": "+list[j].rep+"p]");
             }
             System.out.println("");
             temp=temp.nextVertex;
@@ -127,7 +130,10 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                 Arrays.sort(list);
                 System.out.print("#"+temp.vertexInfo+" : ");
                 for(int j=0; j<list.length; j++){
-                    System.out.print("["+list[j].toVertex.vertexInfo + ": "+list[j].rep+"]");
+                    System.out.print("[");
+                    if(temp.friendList.contains(list[j].toVertex.vertexInfo)) System.out.print("Friend: ");
+                    else System.out.print("Stranger: ");
+                    System.out.print(list[j].toVertex.vertexInfo + ": "+list[j].rep+"p]");
                 }
                 System.out.println("");
                 break;
@@ -156,11 +162,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         while (temp != null) {
             if (temp.vertexInfo.compareTo(v) == 0) {
                 // Reached vertex, look for destination now
-                Edge<T, N> currentEdge = temp.firstFriend;
-                while (currentEdge != null) {
-                    list.add(currentEdge.toVertex.vertexInfo);
-                    currentEdge = currentEdge.nextEdge;
-                }
+                return temp.friendList;
             }
             temp = temp.nextVertex;
         }
@@ -171,11 +173,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         Student<T, N> temp = head;
         while (temp != null) {
             System.out.print("# " + temp.vertexInfo + " : ");
-            Edge<T, N> currentEdge = temp.firstFriend;
-            while (currentEdge != null) {
-                System.out.print(currentEdge.toVertex.vertexInfo+" ");
-                currentEdge = currentEdge.nextEdge;
-            }
+            System.out.println(temp.friendList);
             System.out.println();
             temp = temp.nextVertex;
         }
