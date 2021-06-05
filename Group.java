@@ -174,7 +174,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         while (temp != null) {
             System.out.print("# " + temp.vertexInfo + " : ");
             System.out.println(temp.friendList);
-            System.out.println();
             temp = temp.nextVertex;
         }
     }
