@@ -192,9 +192,11 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         while (sourceV != null) {
             if (sourceV.vertexInfo.equals(mentee)) {
                 if(good){
-                    addEdge(mentee, mentor, 10);
+                    addEdge(mentee, mentor, 10, true);//parse true as they is friend now
+                    addEdge(mentor, mentee, 0, true);
                 }else{
-                    addEdge(mentee, mentor, 2);
+                    addEdge(mentee, mentor, 2, true);
+                    addEdge(mentor, mentee, 0, true);
                 }
                 return true;
             }
@@ -232,12 +234,12 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
                     }
                     temp = temp.nextEdge;
                 }
-                //if 他们原本不是朋友
+                //if 他们原本不是朋友 他们也还是不会是朋友
                 if(!found){
                     if(good){
-                        addEdge(listener, rumors, weight/2);
+                        addEdge(listener, rumors, weight/2, false);
                     }else{
-                        addEdge(listener, rumors, weight*-1);
+                        addEdge(listener, rumors, weight*-1, false);
                     }
                 }
                 return true;
