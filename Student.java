@@ -25,6 +25,7 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
    int indeg; 
    Edge<T,N> firstFriend; 
    Student<T,N> nextVertex;
+   ArrayList<T> friendList=new ArrayList<>(); //this is to show friend list only
    Random r=new Random(); 
    
    public Student() {
