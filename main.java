@@ -214,7 +214,7 @@ public class main {
                 //one cannot form new connection with themselves or the relationship had existed
                 students[d - 1]++;
 
-                if (g1.addUndirectedEdge(s, d, 0, true)) { //add the new connection (if fail try again)
+                if (g1.addUndirectedEdge(s, d)) { //add the new connection (if fail try again)
                     i++;
                 }
             }
