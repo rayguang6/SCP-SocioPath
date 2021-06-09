@@ -15,3 +15,5 @@ UM_Data Structure Tuto6 Graoup SCP Assignment
 <BR> JS: 05/06/2021 - [EVENT 6] uploaded Frienship.java & FrienshipList.java & updated main.java 
 <BR> CF: 05/06/2021 - Student.java (ArrayList<> Friend), Group.java (updated addEdge to accept one more boolean parameters to indicate the source and destination will be friend or not. In [EVENT 1] they will be friend, whereas in [EVENT 2] they will only update rep point but not be friend.)(so printEdge(), printEdge(T v), printFriend(), printFriends(T v) all updated as they will print the rep point and also mention that they are frens or not)  
   
+<BR>
+  <BR> HC: 09/06/2021 - [EVENT 5] updated main.java & Group.java
