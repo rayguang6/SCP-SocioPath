@@ -73,6 +73,26 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         return addEdge(source, destination, 0, true) && addEdge(destination, source, 0, true);
     }
 
+    public boolean updateRep(T source, T destination, int weight, boolean friend) {
+        //no condition checking of nodes is required because will be checked in previous method
+        Student<T, N> sourceV = head;
+        while (sourceV != null) {
+            if (sourceV.vertexInfo.equals(source)) {
+                Edge<T,N> temp=sourceV.relativeRep;
+                while(temp!=null){
+                    if(temp.toVertex.vertexInfo.equals(destination)){
+                        temp.addRep(weight);
+                    }
+                    temp=temp.nextEdge;
+                }
+                if(friend) sourceV.friendList.add(destination);
+                return true;
+            }
+            sourceV = sourceV.nextVertex;
+        }
+        return false;
+    }
+    
     public void printAllStudentProfile(){
         Student<T,N> temp=head;
         while(temp!=null){
@@ -93,6 +113,42 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             temp = temp.nextVertex;
         }
         return false;
+    }
+    
+    public boolean findEdge(T source, T destination){
+        Student<T, N> sourceV = head;
+        while (sourceV != null) {
+            if (sourceV.vertexInfo.equals(source)) {
+                Edge<T, N> temp = sourceV.relativeRep;
+                while (temp != null) {
+                    if (temp.toVertex.vertexInfo.equals(destination)) {
+                        return true;
+                    }
+                    temp = temp.nextEdge;
+                }
+            }
+            sourceV = sourceV.nextVertex;
+        }
+        return false;
+    }
+    
+    public int getRep(T source, T destination) { //get rep point between 2 nodes
+        Student<T, N> sourceV = head;
+        int weight = 0;
+        while (sourceV != null) {
+            if (sourceV.vertexInfo.equals(source)) {
+                Edge<T, N> temp = sourceV.relativeRep;
+                while (temp != null) {
+                    if (temp.toVertex.vertexInfo.equals(destination)) {
+                        weight = temp.rep;
+                        return weight;
+                    }
+                    temp = temp.nextEdge;
+                }
+            }
+            sourceV = sourceV.nextVertex;
+        }
+        return weight;
     }
 
     public void printEdges() { //print friends of all with rep point
@@ -189,87 +245,57 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         if (!hasStudent(mentor) || !hasStudent(mentee)) {
             return false;
         }
-        //if they are friend, not stranger, action cannot be done
-        if(findEdge(mentor, mentee)>0) return false;
-        Student<T, N> sourceV = head;
-        while (sourceV != null) {
-            if (sourceV.vertexInfo.equals(mentee)) {
-                if(good){
-                    addEdge(mentee, mentor, 10, true);//parse true as they is friend now
-                    addEdge(mentor, mentee, 0, true);
-                }else{
-                    addEdge(mentee, mentor, 2, true);
-                    addEdge(mentor, mentee, 0, true);
-                }
-                return true;
-            }
-            sourceV = sourceV.nextVertex;
+        if (getFriends(mentor).contains(mentee)) {
+            return false; //if they are friends, cannot be done
         }
-        return false;
+        //modify mentee--->mentor
+        if (findEdge(mentee, mentor)){ //如果他们已经对他有刻板印象
+            if(good){
+                updateRep(mentee, mentor, 10, true);
+            }else{
+                updateRep(mentee, mentor, 2, true);
+            }
+        }else{ //如果他们毫不相识
+            if(good){
+                addEdge(mentee, mentor, 10, true);
+            }else{
+                addEdge(mentee, mentor, 2, true);
+            }
+        }
+        //modify meontor---->mentee
+        if(findEdge(mentor, mentee)){
+            updateRep(mentor, mentee, 0, true);
+        }else{
+            addEdge(mentor, mentee, 0, true);
+        }
+        return true;
     }
     
     public boolean chitchat(T talker, T listener, T rumors, boolean good){ //feature 2
         if (head == null) {
             return false;
         }
-        if (!hasStudent(talker) || !hasStudent(listener) ||!hasStudent(rumors)) {
+        if (!hasStudent(talker) || !hasStudent(listener) || !hasStudent(rumors)) {
             return false;
         }
         //basic requirement: talker should know both listener and rumors
-        if(findEdge(talker, listener)==0) return false;
-        int weight=findEdge(talker, rumors);
-        if(weight==0) return false;
-        //modify rep point for listener-rumor
-        Student<T, N> sourceV = head;
-        while (sourceV != null) {
-            if (sourceV.vertexInfo.equals(listener)) {
-                Edge<T, N> temp = sourceV.firstFriend;
-                boolean found=false;
-                while (temp != null) { //while loop to check whether they are frens or not
-                    //if他们是朋友 
-                    if (temp.toVertex.vertexInfo.equals(rumors)) {
-                        if(good){
-                            temp.addRep(weight/2);
-                        }else{
-                            temp.addRep(weight*-1);
-                        }
-                        found=true;
-                    }
-                    temp = temp.nextEdge;
-                }
-                //if 他们原本不是朋友 他们也还是不会是朋友
-                if(!found){
-                    if(good){
-                        addEdge(listener, rumors, weight/2, false);
-                    }else{
-                        addEdge(listener, rumors, weight*-1, false);
-                    }
-                }
-                return true;
-            }
-            sourceV = sourceV.nextVertex;
+        if (!getFriends(talker).contains(listener) || !getFriends(talker).contains(rumors)) {
+            return false;
         }
-        return false;
-    }
-    
-    //method to get relative rep points from A to B
-    public int findEdge(T source, T destination){
-        Student<T, N> sourceV = head;
-        int weight=0;
-        while(sourceV!=null){
-            if (sourceV.vertexInfo.equals(source)) {
-                Edge<T,N> temp=sourceV.firstFriend;
-                while(temp!=null){
-                    if(temp.toVertex.vertexInfo.equals(destination)){
-                        weight=temp.rep;
-                        break;
-                    }
-                    temp=temp.nextEdge;
-                }
+        int weight = getRep(talker, rumors); 
+        if (findEdge(listener, rumors)) { //如果他们已经有刻板印象 （也包括如果他们是朋友） //modidication of point
+            if(good){
+                return updateRep(listener, rumors, weight / 2, false);
+            }else{
+                return updateRep(listener, rumors, weight * -1, false);
             }
-            sourceV=sourceV.nextVertex;
+        } else { //如果他们毫不相识 
+            if (good) {
+                return addEdge(listener, rumors, weight / 2, false);
+            } else {
+                return addEdge(listener, rumors, weight * -1, false);
+            }
         }
-        return weight;
     }
     
     public void haveLunch(int[] student, T me){ // updated feature 3: PARALLEL FARMING
