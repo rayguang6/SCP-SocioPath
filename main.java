@@ -106,6 +106,9 @@ public class main {
                     System.out.println(arrangeBook(size, line));
                     break;
                 case 5:
+                    meetCrush(g1);
+                    g1.printFriends();
+                    break;
                 case 6:
                     System.out.println("Input: ");
                     int num = sc.nextInt();
@@ -177,6 +180,115 @@ public class main {
             System.out.println("");
         }
         return round;
+    }
+    
+    public static void meetCrush(Group g1){
+        Random r = new Random();
+        Scanner sc=new Scanner(System.in);
+        System.out.println("Enter your crush.");
+        int crush = sc.nextInt(); //initialise crush
+        
+        System.out.println("Now rumors will start out of nowhere and spread around. You have to stop it "
+                + "from spreading to your crush by convincing people! \nDo you wish to play this event in difficult mode?");
+        int mode;
+        do { //prompt user to enter event mode
+            System.out.println("Type \"2\" as yes and \"1\" as no. ");
+            mode = sc.nextInt();
+        } while (mode != 1 && mode != 2);
+        if (mode == 2) { //difficult mode - add two new connections into graph
+            System.out.println("How many more additional edges u wanted to add?");
+            int num=sc.nextInt();
+            for (int i = 0; i < num;) {
+                int[] students = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                int s = r.nextInt(10) + 1; //randomly pick the first student
+                students[s - 1]++;
+
+                int d;
+                do {
+                    d = r.nextInt(10) + 1;
+                    System.out.println("test" + s + " " + d);
+                } while (students[d - 1] == 1 || g1.getFriends(s).contains(d)); 
+                //one cannot form new connection with themselves or the relationship had existed
+                students[d - 1]++;
+
+                if (g1.addUndirectedEdge(s, d, 0, true)) { //add the new connection (if fail try again)
+                    i++;
+                }
+            }
+        }
+
+        //initialize where rumor starts
+        int start;
+        do {
+            System.out.println("Where the rumor start?");
+            start = sc.nextInt();
+        } while (start == crush);
+
+        System.out.println("Code name number " + start + " knows your secret. And they are telling other people."); //who starts the rumor
+        System.out.println("The rumor spreads by one jump per day.");
+
+        boolean visited[] = new boolean[g1.size]; //all vertices are not visited yet
+        LinkedList<Integer> queue = new LinkedList<>(); //create a queue for bfs
+
+        //Label starting student as visited and enqueue it
+        visited[start - 1] = true;
+        queue.add(start);
+
+        int pathstocrush = 0, level = 0, lastElement = 0;
+        ArrayList<Integer> tobeconvinced = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> levels = new ArrayList<>(); //array list to present different depth
+        label1:
+        while (queue.size() != 0) {
+            //Dequeue and print the starting student
+            start = queue.poll();
+            //Get all adjacent vertices (friends) of dequeued starting student
+            //If the friends have not been 'visited' yet mark them visited and enqueue them
+            ArrayList<Integer> friendlist = g1.getFriends(start);
+            for (int i = 0; i < friendlist.size(); i++) {
+                int node = friendlist.get(i);
+                if (node == crush) {
+                    pathstocrush++;
+                    tobeconvinced.add(start);
+                }
+                if (!visited[node - 1]) {
+                    visited[node - 1] = true;
+                    queue.add(node);
+                    if (levels.size() == level) { //nodes in next level
+                        ArrayList<Integer> temp = new ArrayList<>();
+                        temp.add(node);
+                        levels.add(temp);
+                    } else { //nodes in the same level
+                        levels.get(level).add(node);
+                    }
+                }
+            }
+            if (level == 0 || start == lastElement) { //when all elements in the same level are discovered
+                System.out.println(levels);
+                if(levels.size()==level){
+                    break label1; //if already reached leaf (no node joined)
+                }
+                if (levels.get(level).contains(crush)) {
+                    break label1; //if this current level already contains your crush, then stop bcos crush is been found
+                }
+                lastElement = levels.get(level).get(levels.get(level).size() - 1); //update the last element to know when a level is all discovered
+                level=level+1; //new level index
+                System.out.println("next level: " + level + " lastElement: " + lastElement);
+            }
+        }
+
+        if (!visited[crush - 1]) { //rumour never reached crush
+            System.out.println("\nCongratulations! You are safe because the rumors will never reach your crush. ");
+            System.out.println("-----End of Event-----");
+        } else {
+            System.out.println("Total days for rumors to reach crush: " + levels.size());
+            System.out.println("People to convinced: " + pathstocrush);
+            if (pathstocrush < levels.size()) { //the days to spread rumors should be less than the people u need to convinced
+                System.out.println("Yes, your targets to convinced are : " + tobeconvinced.toString());
+            } else {
+                System.out.println("No. You are out of time. ");
+            }
+        }
+        System.out.println("");
     }
     
     
