@@ -19,8 +19,9 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
    int average_lunchStart; 
    int average_lunchPeriod; 
    int end_time;
-   int[] lunchStart = new int[3];
-   int[] lunchPeriod = new int[3];
+   ArrayList<Integer> lunchStart = new ArrayList<>();
+   ArrayList<Integer> lunchPeriod = new ArrayList<>();
+   private int lastCheck=0;
    int outdeg;
    int indeg; 
    Edge<T,N> firstFriend; 
@@ -41,12 +42,8 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
       divingrate = r.nextInt(100);
       reputation = 10-(divingrate/10);//if diving rate high, reputation low
       if(reputation==0) reputation=1;
-      for(int i=0; i<lunchStart.length; i++){
-          lunchStart[i]=setTime();
-      }
-      for(int j=0; j<lunchPeriod.length; j++){
-          lunchPeriod[j]= r.nextInt(55)+5;
-      }
+      lunchStart.add(setTime());
+      lunchPeriod.add(r.nextInt(56) + 5);
    }	
    
     public int setTime(){
@@ -60,51 +57,48 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
         return temp;
     }
 	
-    public void calculateAverage(){
-        //to calculate average lunch start time
-        if(average_lunchStart==0){
-            int min=0, hr=0, resultmin, resulthr, temp;
-            for(int i=0; i<lunchStart.length; i++){
-                min=min+lunchStart[i]%100;
-            }
-            for(int i=0; i<lunchStart.length; i++){
-                hr=hr+lunchStart[i]/100;
-            }
-            resulthr=hr/lunchStart.length;
-            temp=hr%lunchStart.length;
-            min=min+temp*60;
-            resultmin=min/lunchStart.length;
-            while(resultmin>=60){
-                resulthr+=1;
-                resultmin-=60;
-            }
-            end_time=resulthr*100+resultmin;
-        }   
-        //to calculate average lunch period
-        if(average_lunchPeriod==0){
-            for(int j=0; j<lunchPeriod.length; j++){
-                average_lunchPeriod=average_lunchPeriod+lunchPeriod[j];
-            }
-            average_lunchPeriod=average_lunchPeriod/(lunchPeriod.length);
-        }
-        //to calculate average lunch end time
-        if(end_time==0){
-            int endMinute=average_lunchStart%100+average_lunchPeriod;
-            if(endMinute>=60){
-                end_time=(average_lunchStart/100 * 100)+100+(endMinute-60);
-            }else{
-                end_time=average_lunchStart+average_lunchPeriod;
-            }
-        }
+    public void generateTime() {
+        lunchStart.add(setTime());
+        lunchPeriod.add(r.nextInt(54) + 6); //(6-59)
     }
 	
-    //to print array
-    public String array_toString(int[] ary){
-        String str="[ ";
-        for(int i=0; i<ary.length; i++){
-            str=str+ary[i]+" ";
+    public void calculateAverage(int day){
+        //to calculate average lunch start time
+        if (day != lastCheck) {
+            int min = 0, hr = 0, resultmin, resulthr, temp;
+            for (int i = 0; i < day; i++) {
+                min = min + lunchStart.get(i) % 100;
+            }
+            for (int i = 0; i < day; i++) {
+                hr = hr + lunchStart.get(i) / 100;
+            }
+            resulthr = hr / day;
+            temp = hr % day;
+            min = min + temp * 60;
+            resultmin = min / day;
+            while (resultmin >= 60) {
+                resulthr += 1;
+                resultmin -= 60;
+            }
+            average_lunchStart = resulthr * 100 + resultmin;
+
+            //to calculate average lunch period
+            int sumPeriod=0;
+            for (int j = 0; j < day; j++) {
+                sumPeriod = sumPeriod + lunchPeriod.get(j);
+            }
+            average_lunchPeriod = sumPeriod / day;
+
+            //to calculate average lunch end time
+            int endMinute = average_lunchStart % 100 + average_lunchPeriod;
+            if (endMinute >= 60) { //using if instead of while is because largest value of min will be 59 + 59 = 118
+                end_time = (average_lunchStart / 100 * 100) + 100 + (endMinute - 60);
+            } else {
+                end_time = average_lunchStart + average_lunchPeriod;
+            }
+            //update lastCheck
+            lastCheck=day;
         }
-        return str+"]";
     }
 
     @Override
