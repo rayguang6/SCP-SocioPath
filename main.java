@@ -6,6 +6,9 @@
 package s2assignment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
