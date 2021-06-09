@@ -68,6 +68,10 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         }
         return false;
     }
+    
+    public boolean addUndirectedEdge(T source, T destination){
+        return addEdge(source, destination, 0, true) && addEdge(destination, source, 0, true);
+    }
 
     public void printAllStudentProfile(){
         Student<T,N> temp=head;
