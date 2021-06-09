@@ -298,7 +298,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
         }
     }
     
-    public void haveLunch(int[] student, T me){ // updated feature 3: PARALLEL FARMING
+    public void haveLunch(int[] student, T me， int day){ // updated feature 3: PARALLEL FARMING
         Student<T, N>[] ary=new Student[student.length];
         Student<T, N> ME=new Student<>();
         //inseting students into a list
@@ -307,9 +307,15 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> {
             while(sourceV!=null){
                 if (sourceV.vertexInfo.equals(student[i])) {
                     //calculating average lunch period and end time
+                    while(sourceV.lunchPeriod.size()<day){
+                        sourceV.generateTime();
+                    }
                     sourceV.calculateAverage();
                     ary[i]=sourceV;
                 }else if(sourceV.vertexInfo.equals(me)){
+                    while(sourceV.lunchPeriod.size()<day){
+                        sourceV.generateTime();
+                    }
                     sourceV.calculateAverage();
                     ME=sourceV;
                 }
