@@ -128,6 +128,8 @@ public class main {
                 case 7:
                     System.out.println("-----list with rep points-----");
                     g1.printEdges();
+                    System.out.println("------All Student Profile-------");
+                    g1.printAllStudentProfile();
                     break;
             }
             printFeature();
