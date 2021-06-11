@@ -205,7 +205,7 @@ public class MeetCrush {
         if (day == 1) {
             System.out.println("You cannot convince anyone. ");
         } else if (day == 0) {
-            System.out.println("Rumors wont reached your crush");
+            System.out.println("Rumors wont reached your crush. ");
         } else {
             if (dayLeft <= tobeConvinced.size() && !g.path.isEmpty()) {
                 System.out.print("Oops, the following line hasn't been break: " + g.path + ". You should convince ");
