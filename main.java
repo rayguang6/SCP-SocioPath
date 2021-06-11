@@ -15,12 +15,125 @@ import java.util.Scanner;
  *
  * @author doublechin
  */
-public class main {
-
-    public static void main(String[] args) {
+public class S2Assignment<T> {
+    public static void main(String[] args){
         Scanner sc=new Scanner(System.in);
         Group<Integer, Integer> g1=new Group<>();
-        //initial setup 
+        initialization(g1);
+        g1.printFriends();
+        g1.printAllStudentProfile();
+        printFeature();
+        int input=sc.nextInt();
+        while(input!=-1){
+            switch(input){
+                case 1:
+                    System.out.println("Who is teaching?");
+                    int mentor=sc.nextInt();
+                    System.out.println("Who is being teached?");
+                    int mentee=0;
+                    do{
+                    mentee=sc.nextInt();
+                    }while(mentee==mentor);
+                    System.out.println("Is the teaching good? 'true' for yes, 'false' for no.");
+                    boolean good=sc.nextBoolean();
+                    if(g1.teachStrager(mentor, mentee, good)){
+                        System.out.println("updated realtive rep point "+mentor+" to "+mentee+" : ");
+                    }else{
+                        System.out.println("Invalid person. Action cannot be done. Please ensure people entered existed and they are stanger.");
+                    }
+                    g1.printEdges(mentee);
+                    break;
+                case 2:
+                    System.out.println("Who is talking?");
+                    int talk =sc.nextInt();
+                    System.out.println("Who is listening?");
+                    int listen=0;
+                    do{
+                        listen=sc.nextInt();
+                    }while(listen==talk);
+                    System.out.println("Who is him talking?");
+                    int gossip=0;
+                    do{
+                        gossip=sc.nextInt();
+                    }while(gossip==talk || gossip==listen);
+                    System.out.println("Is him good? 'true' for yes, 'false' for no.");
+                    boolean chitchat=sc.nextBoolean();
+                    System.out.println("relative rep point from "+talk+" : ");
+                    g1.printEdges(talk);
+                    System.out.println("last relative rep point from "+listen+" : ");
+                    g1.printEdges(listen);
+                    if(!g1.chitchat(talk, listen, gossip, chitchat)){
+                        System.out.println("Oops, invalid person entered. Please ensure person entered is valid and talker knows everyone you entered!");
+                    }else{
+                        if(chitchat){
+                            System.out.println(talk+" told "+listen+" something good about "+gossip+". Relative rep point increased!");
+                        }else{
+                            System.out.println("Oh no! "+talk+" told "+listen+" something bad about "+gossip+". Relative rep point decreased!");
+                        }
+                    }
+                    System.out.println("updated relative rep point from "+listen+" : ");
+                    g1.printEdges(listen);
+                    break;
+                case 3:
+                    System.out.println("Who are you?");
+                    int observe=sc.nextInt();
+                    System.out.println("Insert number of people you want to observe.");
+                    int counter=sc.nextInt();
+                    int[] list= new int[counter];
+                    System.out.println("Insert people you want to observe.");
+                    for(int i=0; i<counter;){
+                        int observant=sc.nextInt();
+                        if(observant!=observe){
+                            list[i]=observant;
+                            i++;
+                        }
+                    }
+                    System.out.println("How many days u want to observe?");
+                    int day=sc.nextInt();
+                    g1.haveLunch(list, observe, day);
+                    break;
+                case 4:
+                    System.out.println("Insert number of books: ");
+                    int size=sc.nextInt();
+                    int[] line=new int[size];
+                    System.out.println("Insert list of height of books from left to right: ");
+                    for(int i=0; i<size; i++){
+                        line[i]=sc.nextInt();
+                    }
+                    System.out.println("Total round required: "+arrangeBook(size, line));
+                    break;
+                case 5:
+                    MeetCrush go=new MeetCrush(g1);
+                    break;
+                case 6:
+                    System.out.println("Input: ");
+                    int num = sc.nextInt();
+                    Friendship f = new Friendship(num+1);
+                    for(int i=0; i<num; i++){
+                        f.addEdge(sc.nextInt(), sc.nextInt());
+                    }
+                    System.out.println("You can form the following friendship :\n");
+                    ArrayList<FrienshipList> result=f.Pathlist(1);
+                    Collections.sort(result); //to sort from shortest distance to longest distance
+                    for(int i=1; i<=result.size(); i++){
+                        System.out.println(i+". "+result.get(i-1));
+                    }
+                    break;
+                case 7:
+                    System.out.println("-----list with rep points-----");
+                    g1.printEdges();
+                    System.out.println("------All Student Profile-------");
+                    g1.printAllStudentProfile();
+                    break;
+            }
+            printFeature();
+            input=sc.nextInt();
+        }
+        System.out.println("-----Thank You. Have a Nice Day.-------");
+        
+       
+    }
+    public static void initialization(Group g1){
         int[] student={1,2,3,4,5,6,7,8,9,10};
         for (int i : student)
             g1.addVertex(i);
@@ -40,106 +153,7 @@ public class main {
         g1.addEdge(9, 10, 5, true);
         g1.addEdge(10, 9, 6, true);
         g1.addEdge(10, 4, 7, true);
-        g1.printFriends();
-        g1.printAllStudentProfile();
-        printFeature();
-        int input=sc.nextInt();
-        while(input!=-1){
-            switch(input){
-                case 1:
-                    //test case:
-                    //g1.teachStrager(1, 2, true);
-                    //g1.teachStrager(4, 2, false);
-                    System.out.println("Who is teaching?");
-                    int mentor=sc.nextInt();
-                    System.out.println("Who is being teached?");
-                    int mentee=sc.nextInt();
-                    System.out.println("Is the teaching good? 'true' for yes, 'false' for no.");
-                    boolean good=sc.nextBoolean();
-                    System.out.println("last relative rep point"+mentor+" to "+mentee+" : ");
-                    g1.printEdges(mentee);
-                    g1.teachStrager(mentor, mentee, good);
-                    System.out.println("updated realtive rep point"+mentor+" to "+mentee+" : ");
-                    g1.printEdges(mentee);
-                    break;
-                case 2:
-                    //test case: 
-                    // 1 2 7 (stranger)
-                    // 7 2 5 (invalid person)
-                    System.out.println("Who is talking?");
-                    int talk =sc.nextInt();
-                    System.out.println("Who is listening?");
-                    int listen=sc.nextInt();
-                    System.out.println("Who is him talking?");
-                    int gossip=sc.nextInt();
-                    System.out.println("Is him good? 'true' for yes, 'false' for no.");
-                    boolean chitchat=sc.nextBoolean();
-                    System.out.println("relative rep point to "+talk+" : ");
-                    g1.printEdges(talk);
-                    System.out.println("last relative rep point to "+listen+" : ");
-                    g1.printEdges(listen);
-                    if(!g1.chitchat(talk, listen, gossip, chitchat)){
-                        System.out.println("----invalid person----");
-                    }
-                    System.out.println("updated relative rep point "+gossip+" to "+listen+" : ");
-                    g1.printEdges(listen);
-                    break;
-                case 3:
-                    System.out.println("Who are you?");
-                    int observe=sc.nextInt();
-                    System.out.println("Insert number of people you want to observe.");
-                    int counter=sc.nextInt();
-                    int[] list= new int[counter];
-                    System.out.println("Insert people you want to observe.");
-                    for(int i=0; i<counter; i++){
-                        int observant=sc.nextInt();
-                        list[i]=observant;
-                    }
-                    g1.haveLunch(list, observe);
-                    break;
-                case 4:
-                    //test case: 13 16 17 12 15
-                    System.out.println("Insert number of books: ");
-                    int size=sc.nextInt();
-                    int[] line=new int[size];
-                    System.out.println("Insert list of height of books from left to right: ");
-                    for(int i=0; i<size; i++){
-                        line[i]=sc.nextInt();
-                    }
-                    System.out.println(arrangeBook(size, line));
-                    break;
-                case 5:
-                    meetCrush(g1);
-                    g1.printFriends();
-                    break;
-                case 6:
-                    System.out.println("Input: ");
-                    int num = sc.nextInt();
-                    Friendship f = new Friendship(num+1);
-                    for(int i=0; i<num; i++){
-                        f.addEdge(sc.nextInt(), sc.nextInt());
-                    }
-                    System.out.println("\nYou can form the following friendship :\n");
-                    ArrayList<FrienshipList> result=f.Pathlist(1);
-                    Collections.sort(result); //to sort from shortest distance to longest distance
-                    for(int i=1; i<=result.size(); i++){
-                        System.out.println(i+". "+result.get(i-1));
-                    }
-                case 7:
-                    System.out.println("-----list with rep points-----");
-                    g1.printEdges();
-                    System.out.println("------All Student Profile-------");
-                    g1.printAllStudentProfile();
-                    break;
-            }
-            printFeature();
-            input=sc.nextInt();
-        }
-        System.out.println("-----Thank You. Have a Nice Day.-------");
-        
-       
     }
-    
     
     public static void printFeature(){
         System.out.println("1. Teach stranger");
@@ -185,115 +199,6 @@ public class main {
             System.out.println("");
         }
         return round;
-    }
-    
-    public static void meetCrush(Group g1){
-        Random r = new Random();
-        Scanner sc=new Scanner(System.in);
-        System.out.println("Enter your crush.");
-        int crush = sc.nextInt(); //initialise crush
-        
-        System.out.println("Now rumors will start out of nowhere and spread around. You have to stop it "
-                + "from spreading to your crush by convincing people! \nDo you wish to play this event in difficult mode?");
-        int mode;
-        do { //prompt user to enter event mode
-            System.out.println("Type \"2\" as yes and \"1\" as no. ");
-            mode = sc.nextInt();
-        } while (mode != 1 && mode != 2);
-        if (mode == 2) { //difficult mode - add two new connections into graph
-            System.out.println("How many more additional edges u wanted to add?");
-            int num=sc.nextInt();
-            for (int i = 0; i < num;) {
-                int[] students = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                int s = r.nextInt(10) + 1; //randomly pick the first student
-                students[s - 1]++;
-
-                int d;
-                do {
-                    d = r.nextInt(10) + 1;
-                    System.out.println("test" + s + " " + d);
-                } while (students[d - 1] == 1 || g1.getFriends(s).contains(d)); 
-                //one cannot form new connection with themselves or the relationship had existed
-                students[d - 1]++;
-
-                if (g1.addUndirectedEdge(s, d)) { //add the new connection (if fail try again)
-                    i++;
-                }
-            }
-        }
-
-        //initialize where rumor starts
-        int start;
-        do {
-            System.out.println("Where the rumor start?");
-            start = sc.nextInt();
-        } while (start == crush);
-
-        System.out.println("Code name number " + start + " knows your secret. And they are telling other people."); //who starts the rumor
-        System.out.println("The rumor spreads by one jump per day.");
-
-        boolean visited[] = new boolean[g1.size]; //all vertices are not visited yet
-        LinkedList<Integer> queue = new LinkedList<>(); //create a queue for bfs
-
-        //Label starting student as visited and enqueue it
-        visited[start - 1] = true;
-        queue.add(start);
-
-        int pathstocrush = 0, level = 0, lastElement = 0;
-        ArrayList<Integer> tobeconvinced = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> levels = new ArrayList<>(); //array list to present different depth
-        label1:
-        while (queue.size() != 0) {
-            //Dequeue and print the starting student
-            start = queue.poll();
-            //Get all adjacent vertices (friends) of dequeued starting student
-            //If the friends have not been 'visited' yet mark them visited and enqueue them
-            ArrayList<Integer> friendlist = g1.getFriends(start);
-            for (int i = 0; i < friendlist.size(); i++) {
-                int node = friendlist.get(i);
-                if (node == crush) {
-                    pathstocrush++;
-                    tobeconvinced.add(start);
-                }
-                if (!visited[node - 1]) {
-                    visited[node - 1] = true;
-                    queue.add(node);
-                    if (levels.size() == level) { //nodes in next level
-                        ArrayList<Integer> temp = new ArrayList<>();
-                        temp.add(node);
-                        levels.add(temp);
-                    } else { //nodes in the same level
-                        levels.get(level).add(node);
-                    }
-                }
-            }
-            if (level == 0 || start == lastElement) { //when all elements in the same level are discovered
-                System.out.println(levels);
-                if(levels.size()==level){
-                    break label1; //if already reached leaf (no node joined)
-                }
-                if (levels.get(level).contains(crush)) {
-                    break label1; //if this current level already contains your crush, then stop bcos crush is been found
-                }
-                lastElement = levels.get(level).get(levels.get(level).size() - 1); //update the last element to know when a level is all discovered
-                level=level+1; //new level index
-                System.out.println("next level: " + level + " lastElement: " + lastElement);
-            }
-        }
-
-        if (!visited[crush - 1]) { //rumour never reached crush
-            System.out.println("\nCongratulations! You are safe because the rumors will never reach your crush. ");
-            System.out.println("-----End of Event-----");
-        } else {
-            System.out.println("Total days for rumors to reach crush: " + levels.size());
-            System.out.println("People to convinced: " + pathstocrush);
-            if (pathstocrush < levels.size()) { //the days to spread rumors should be less than the people u need to convinced
-                System.out.println("Yes, your targets to convinced are : " + tobeconvinced.toString());
-            } else {
-                System.out.println("No. You are out of time. ");
-            }
-        }
-        System.out.println("");
     }
     
     
