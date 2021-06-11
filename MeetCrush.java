@@ -162,7 +162,6 @@ public class MeetCrush {
             int min = 10, min_num = 0, frequency= 0, element = 0;
             for (int i = 0; i < removed.size(); i++) { //loop to find who has greatest influence in the path
                 //the priority: people with shortest distance to crush> people with most shortest distance > people with more participance in others line
-                System.out.println(removed.get(i).get(0)+" "+removed.get(i).get(1)+" "+ removed.get(i).get(2)+" "+ removed.get(i).get(3));
                 if (removed.get(i).get(1) < min) {
                     min = removed.get(i).get(1);
                     min_num = removed.get(i).get(2);
@@ -179,7 +178,6 @@ public class MeetCrush {
                     frequency = removed.get(i).get(3);
                     element = removed.get(i).get(0);
                 }
-                System.out.println(element+" "+min+" "+min_num+" "+frequency);
             }
             tobeConvinced.add(element); //convinced the person who brings greater effect
             ArrayList<ArrayList<Integer>> temp = new ArrayList<>(); //temp to store the new path
