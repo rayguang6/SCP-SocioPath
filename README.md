@@ -17,3 +17,5 @@ UM_Data Structure Tuto6 Graoup SCP Assignment
 <BR>
   <BR> HC: 09/06/2021 - [EVENT 5] updated main.java & Group.java (addUndirectedEdge())
 <BR> CF: 09/06/2021 - [EVENT 1 & 2] updated Group.java (boolean updateRep(), boolean findEdge(), int getRep(), boolean teachStranger(), boolean chitchat())
+<BR>
+  <BR> CF: 11/06/2021 - [EVENT 5] updated MeetCrush.java
