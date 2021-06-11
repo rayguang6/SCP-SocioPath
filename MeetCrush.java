@@ -182,7 +182,7 @@ public class MeetCrush {
             tobeConvinced.add(element); //convinced the person who brings greater effect
             ArrayList<ArrayList<Integer>> temp = new ArrayList<>(); //temp to store the new path
             for (int p = 0; p < g.path.size(); p++) {
-                if (!g.path.get(p).contains(element)) {
+                if (!g.path.get(p).contains(element)) { //If the target is also in other path, he/she will not able to spread the rumors after being convinced
                     ArrayList<Integer> temp1 = new ArrayList<>(g.path.get(p));
                     temp.add(temp1);
                 }
@@ -190,7 +190,7 @@ public class MeetCrush {
             if (temp.isEmpty()) { //all targeted people are convinced
                 break label;
             }
-            g.path.clear();//the path will be cleared and stored with new path, by stopping that people, he/she will not able to spread the rumors, adn this stop the line
+            g.path.clear();//the path will be cleared and stored with new possible path without the convinced target
             g.path = temp;
             removed.clear();//restore the elements to be removed
             dayLeft = 10;
