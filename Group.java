@@ -12,7 +12,7 @@ import java.util.Arrays;
  *
  * @author doublechin
  */
-public class Group<T extends Comparable<T>, N extends Comparable<N>> implements Cloneable {
+public class Group<T extends Comparable<T>, N extends Comparable<N>>{
 
     Student<T, N> head;
     int size;
@@ -65,10 +65,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> implements 
             sourceV = sourceV.nextVertex;
         }
         return false;
-    }
-
-    public boolean addUndirectedEdge(T source, T destination) {
-        return addEdge(source, destination, 0, true) && addEdge(destination, source, 0, true);
     }
 
     public boolean updateRep(T source, T destination, int weight, boolean friend) {
@@ -241,7 +237,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> implements 
         }
     }
 
-    public boolean teachStrager(T mentor, T mentee, boolean good) { //feature 1
+    public boolean teachStranger(T mentor, T mentee, boolean good) { //feature 1
         if (head == null) {
             return false;
         }
@@ -281,7 +277,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>> implements 
         if (!hasStudent(talker) || !hasStudent(listener) || !hasStudent(rumors)) {
             return false;
         }
-        //basic requirement: talker should know both listener and rumors
+        //basic requirement: talker should know both listener and rumors (safe check)
         if (!getFriends(talker).contains(listener) || !getFriends(talker).contains(rumors)) {
             return false;
         }
