@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class MeetCrush {
     private int size;
     private ArrayList<Integer>[] friendList;
-    ArrayList<ArrayList<Integer>> path = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> path = new ArrayList<>();
 
     public MeetCrush(Group group) {
         this.size = group.size + 1;
@@ -22,7 +22,7 @@ public class MeetCrush {
                 addEdge(i, friend.get(f));
             }
         }
-        main(this);
+        main();
     }
 
     public void addEdge(int u, int v) {
@@ -66,7 +66,7 @@ public class MeetCrush {
     }
 
     
-    public void main(MeetCrush g) {
+    public void main() {
         Random r = new Random();
         Scanner sc = new Scanner(System.in);
         //extra feature to add extra edges (line 74-88)
@@ -81,30 +81,25 @@ public class MeetCrush {
             int end;
             do {
                 end = r.nextInt(10) + 1;
-            } while (g.friendList[start].contains(end) || start == end);
+            } while (friendList[start].contains(end) || start == end);
             System.out.println("Edges added: "+start+" "+end);
-            g.addUndirectedEdge(start, end);
+            addUndirectedEdge(start, end);
         }
-//        g.addUndirectedEdge(7, 5);
-//        g.addUndirectedEdge(5, 7);
-//        g.addUndirectedEdge(9, 1);
-//        g.addUndirectedEdge(10, 2);
-        int startNode = r.nextInt(10) + 1;
-//        startNode=5;
-        int endNode = startNode;
+        
+        int rumors = r.nextInt(10) + 1;
+        int crush = rumors;
         do {
-            endNode = r.nextInt(10) + 1;
-//            endNode = 6;
-        } while (endNode == startNode);
+            crush = r.nextInt(10) + 1;
+        } while (crush == rumors);
 
-        System.out.println("Following are all different paths from " + startNode + " to " + endNode);
-        g.printAllPaths(startNode, endNode);
-        System.out.println(g.path);
+        System.out.println("Following are all different paths from " + rumors + " to " + crush);
+        printAllPaths(rumors, crush);
+        System.out.println(path);
 
         int day = 10;
-        for (int i = 0; i < g.path.size(); i++) {
-            if (g.path.get(i).size() - 1 < day) {
-                day = g.path.get(i).size() - 1; //get the minimum day
+        for (int i = 0; i < path.size(); i++) {
+            if (path.get(i).size() - 1 < day) {
+                day = path.get(i).size() - 1; //get the minimum day
             }
         }
         if (day == 10) { //if path.size is zero
@@ -119,9 +114,9 @@ public class MeetCrush {
         int dayLeft = day;
         label:
         while (j <= dayLeft) { //starting from day 1 to the min day
-            for (int i = 0; i < g.path.size(); i++) { //loop through all the possible path
-                if (g.path.get(i).get(j) == endNode) { //if already arrived crush in that day
-                    tobeConvinced.add(g.path.get(i).get(j - 1));
+            for (int i = 0; i < path.size(); i++) { //loop through all the possible path
+                if (path.get(i).get(j) == crush) { //if already arrived crush in that day
+                    tobeConvinced.add(path.get(i).get(j - 1));
                     break label;
                 }
                 boolean found = false;
@@ -129,23 +124,23 @@ public class MeetCrush {
                     if (removed.isEmpty()) {
                         break;
                     }
-                    if (removed.get(z).get(0)== g.path.get(i).get(j)) {
+                    if (removed.get(z).get(0)== path.get(i).get(j)) {
                         found= true;
                         break;
                     }
                 }
                 if (!found) { //adding the people who owns rumors on the day with how big influnce is him/her
                     ArrayList<Integer> temp = new ArrayList<>();
-                    int this_element =  g.path.get(i).get(j);
+                    int this_element =  path.get(i).get(j);
                     int min = 10; //the shortest path, eg. 1 to 3 , [1,2,4,5,3][1,2,4,3][1,2,5,3], shortest path is 4
                     int num_min = 0; //the number of shortest path, ^ number of shortest path is 2
                     int num = 0; //the frequency of thiselement in other possible path
-                    for (int t = 0; t < g.path.size(); t++) {
-                        if (g.path.get(t).contains(this_element)) { //loop all the possible path
-                            if (g.path.get(t).size() < min) {
-                                min = g.path.get(t).size(); //shortest distance
+                    for (int t = 0; t < path.size(); t++) {
+                        if (path.get(t).contains(this_element)) { //loop all the possible path
+                            if (path.get(t).size() < min) {
+                                min = path.get(t).size(); //shortest distance
                                 num_min=1; 
-                            }else if (g.path.get(t).size() == min) {
+                            }else if (path.get(t).size() == min) {
                                 num_min++; //num of shortest student
                             }
                             num++; //frequency of appearance of this_element in other paths
@@ -182,22 +177,22 @@ public class MeetCrush {
             }
             tobeConvinced.add(element); //convinced the person who brings greater effect
             ArrayList<ArrayList<Integer>> temp = new ArrayList<>(); //temp to store the new path
-            for (int p = 0; p < g.path.size(); p++) {
-                if (!g.path.get(p).contains(element)) {
-                    ArrayList<Integer> temp1 = new ArrayList<>(g.path.get(p));
+            for (int p = 0; p < path.size(); p++) {
+                if (!path.get(p).contains(element)) { //once the person is convinced, he will stopped every line that he involved in from reaching the crush
+                    ArrayList<Integer> temp1 = new ArrayList<>(path.get(p));
                     temp.add(temp1);
                 }
             }
             if (temp.isEmpty()) { //all targeted people are convinced
                 break label;
             }
-            g.path.clear();//the path will be cleared and stored with new path, by stopping that people, he/she will not able to spread the rumors, adn this stop the line
-            g.path = temp;
+            path.clear();//the path will be cleared and stored with new path
+            path = temp;
             removed.clear();//restore the elements to be removed
             dayLeft = 10;
-            for (int d = 0; d < g.path.size(); d++) { //update day left to loop (minimum day left in the path)
-                if (g.path.get(d).size() < dayLeft) {
-                    dayLeft = g.path.get(d).size() - 1;
+            for (int d = 0; d < path.size(); d++) { //update day left to loop (minimum day left in the path)
+                if (path.get(d).size() < dayLeft) {
+                    dayLeft = path.get(d).size() - 1;
                 }
             }
             j++;
@@ -208,8 +203,8 @@ public class MeetCrush {
         } else if (day == 0) {
             System.out.println("Rumors won't reach your crush. ");
         } else {
-            if (dayLeft <= tobeConvinced.size() && !g.path.isEmpty()) {
-                System.out.print("Oops, the following line(s) haven't been broken: " + g.path + ". You should convince ");
+            if (dayLeft <= tobeConvinced.size() && !path.isEmpty()) {
+                System.out.print("Oops, the following line(s) haven't been broken: " + path + ". You should convince ");
             } else {
                 System.out.print("Yes. you can convince ");
             }
