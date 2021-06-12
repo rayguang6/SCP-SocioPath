@@ -18,7 +18,7 @@ public class Friendship {
 
     private int numFriend;
     private ArrayList<Integer>[] List;
-    static ArrayList<FrienshipList> result = new ArrayList<>(); 
+    private ArrayList<FrienshipList> result = new ArrayList<>(); 
     //An ArrayList for FrienshipList is to enable sorting of the possible pathway
     
     
@@ -72,21 +72,6 @@ public class Friendship {
         return result;
     }
     
-//    public static void main(String[] args) {
-//            Scanner sc = new Scanner(System.in);
-//            System.out.println("Input: ");
-//            int num = sc.nextInt();
-//            Friendship f = new Friendship(num+1);
-//            for(int i=0; i<num; i++){
-//                f.addEdge(sc.nextInt(), sc.nextInt());
-//            }
-//            System.out.println("\nYou can form the following friendship :\n");
-//            Collections.sort(f.Pathlist(1)); //to sort from shortest distance to longest distance
-//            for(int i=1; i<=result.size(); i++){
-//                System.out.println(i+". "+result.get(i-1));
-//            }
-//            
-//    }
 
 }
 
