@@ -101,13 +101,13 @@ public class MeetCrush {
         g.printAllPaths(startNode, endNode);
         System.out.println(g.path);
 
-        int day = g.size - 1;
+        int day = 10;
         for (int i = 0; i < g.path.size(); i++) {
             if (g.path.get(i).size() - 1 < day) {
                 day = g.path.get(i).size() - 1; //get the minimum day
             }
         }
-        if (day == g.size - 1) { //if path.size is zero
+        if (day == 10) { //if path.size is zero
             day = 0;
         }
 
@@ -162,6 +162,7 @@ public class MeetCrush {
             int min = 10, min_num = 0, frequency= 0, element = 0;
             for (int i = 0; i < removed.size(); i++) { //loop to find who has greatest influence in the path
                 //the priority: people with shortest distance to crush> people with most shortest distance > people with more participance in others line
+                
                 if (removed.get(i).get(1) < min) {
                     min = removed.get(i).get(1);
                     min_num = removed.get(i).get(2);
@@ -182,7 +183,7 @@ public class MeetCrush {
             tobeConvinced.add(element); //convinced the person who brings greater effect
             ArrayList<ArrayList<Integer>> temp = new ArrayList<>(); //temp to store the new path
             for (int p = 0; p < g.path.size(); p++) {
-                if (!g.path.get(p).contains(element)) { //If the target is also in other path, he/she will not able to spread the rumors after being convinced
+                if (!g.path.get(p).contains(element)) {
                     ArrayList<Integer> temp1 = new ArrayList<>(g.path.get(p));
                     temp.add(temp1);
                 }
@@ -190,7 +191,7 @@ public class MeetCrush {
             if (temp.isEmpty()) { //all targeted people are convinced
                 break label;
             }
-            g.path.clear();//the path will be cleared and stored with new possible path without the convinced target
+            g.path.clear();//the path will be cleared and stored with new path, by stopping that people, he/she will not able to spread the rumors, adn this stop the line
             g.path = temp;
             removed.clear();//restore the elements to be removed
             dayLeft = 10;
@@ -205,12 +206,12 @@ public class MeetCrush {
         if (day == 1) {
             System.out.println("You cannot convince anyone. ");
         } else if (day == 0) {
-            System.out.println("Rumors wont reached your crush. ");
+            System.out.println("Rumors won't reach your crush. ");
         } else {
             if (dayLeft <= tobeConvinced.size() && !g.path.isEmpty()) {
-                System.out.print("Oops, the following line hasn't been break: " + g.path + ". You should convince ");
+                System.out.print("Oops, the following line(s) haven't been broken: " + g.path + ". You should convince ");
             } else {
-                System.out.print("Yes. you can convinced ");
+                System.out.print("Yes. you can convince ");
             }
             System.out.println(tobeConvinced);
         }
