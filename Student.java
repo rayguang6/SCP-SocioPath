@@ -12,57 +12,60 @@ import java.util.Random;
  *
  * @author doublechin
  */
-class Student <T extends Comparable<T>, N extends Comparable <N>> implements Comparable<Student>{
-   T vertexInfo;
-   int reputation; 
-   int divingrate; 
-   int average_lunchStart; 
-   int average_lunchPeriod; 
-   int end_time;
-   ArrayList<Integer> lunchStart = new ArrayList<>();
-   ArrayList<Integer> lunchPeriod = new ArrayList<>();
-   private int lastCheck=0;
-   int outdeg;
-   int indeg; 
-   Edge<T,N> firstFriend; 
-   Student<T,N> nextVertex;
-   ArrayList<T> friendList=new ArrayList<>(); //this is to show friend list only
-   Random r=new Random(); 
-   
-   public Student() {
-      vertexInfo=null;
-      nextVertex = null;
-      firstFriend = null;
-   }
-	
-   public Student(T vInfo, Student<T,N> next) {
-      vertexInfo = vInfo;
-      nextVertex = next;
-      firstFriend = null;
-      divingrate = r.nextInt(100);
-      reputation = 10-(divingrate/10);//if diving rate high, reputation low
-      if(reputation==0) reputation=1;
-      lunchStart.add(setTime());
-      lunchPeriod.add(r.nextInt(56) + 5);
-   }	
-   
-    public int setTime(){
-        int min=r.nextInt(181);
-        int temp=1100;
-        while(min>=60){
-            temp=temp+100-60;
-            min=min-60;
+class Student<T extends Comparable<T>, N extends Comparable<N>> implements Comparable<Student> {
+
+    T vertexInfo;
+    int reputation; //this one idk should be here or not
+    int divingrate;
+    int average_lunchStart;
+    int average_lunchPeriod;
+    int end_time;
+    ArrayList<Integer> lunchStart = new ArrayList<>();
+    ArrayList<Integer> lunchPeriod = new ArrayList<>();
+    private int lastCheck=0;
+    int outdeg;
+    int indeg;
+    Edge<T, N> relativeRep; //this is to show weight
+    Student<T, N> nextVertex;
+    ArrayList<T> friendList = new ArrayList<>(); //this is to show friend list only
+    Random r = new Random();
+
+    public Student() {
+        vertexInfo = null;
+        nextVertex = null;
+        relativeRep = null;
+    }
+
+    public Student(T vInfo, Student<T, N> next) {
+        vertexInfo = vInfo;
+        nextVertex = next;
+        relativeRep = null;
+        divingrate = r.nextInt(100);
+        reputation = 10 - (divingrate / 10);//if diving rate high, reputation low
+        if (reputation == 0) {
+            reputation = 1;
         }
-        temp=temp+min;
+        lunchStart.add(setTime());
+        lunchPeriod.add(r.nextInt(56) + 5);
+    }
+
+    public int setTime() {
+        int min = r.nextInt(180);
+        int temp = 1100;
+        while (min >= 60) {
+            temp = temp + 100;
+            min = min - 60;
+        }
+        temp = temp + min;
         return temp;
     }
-	
+
     public void generateTime() {
         lunchStart.add(setTime());
         lunchPeriod.add(r.nextInt(54) + 6); //(6-59)
     }
-	
-    public void calculateAverage(int day){
+
+    public void calculateAverage(int day) {
         //to calculate average lunch start time
         if (day != lastCheck) {
             int min = 0, hr = 0, resultmin, resulthr, temp;
@@ -103,20 +106,21 @@ class Student <T extends Comparable<T>, N extends Comparable <N>> implements Com
 
     @Override
     public String toString() {
-        return vertexInfo + "(Reputation : " + reputation + "| Diving rate : " + divingrate + "| Lunch Start Time : " + array_toString(lunchStart) + "| Lunch Period : " + array_toString(lunchPeriod)  + ')';
+        return vertexInfo + "(Reputation : " + reputation + "| Diving rate : " + divingrate
+                + "| Lunch Start Time : " + lunchStart.toString() + "| Lunch Period : " + lunchPeriod.toString()
+                + "| friendList : " + friendList + ")";
     }
 
     @Override
     public int compareTo(Student o) {
         //priority: people with less time
-        if(this.end_time>o.end_time){
+        if (this.end_time > o.end_time) {
             return 1;
-        }else if(this.end_time<o.end_time){
+        } else if (this.end_time < o.end_time) {
             return -1;
-        }else{ 
+        } else {
             return 0;
         }
     }
-   
-}
 
+}
