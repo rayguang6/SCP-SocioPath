@@ -36,7 +36,7 @@ public class S2Assignment<T> {
                     }while(mentee==mentor);
                     System.out.println("Is the teaching good? 'true' for yes, 'false' for no.");
                     boolean good=sc.nextBoolean();
-                    if(g1.teachStrager(mentor, mentee, good)){
+                    if(g1.teachStranger(mentor, mentee, good)){
                         System.out.println("updated realtive rep point "+mentor+" to "+mentee+" : ");
                     }else{
                         System.out.println("Invalid person. Action cannot be done. Please ensure people entered existed and they are stanger.");
@@ -45,17 +45,24 @@ public class S2Assignment<T> {
                     break;
                 case 2:
                     System.out.println("Who is talking?");
-                    int talk =sc.nextInt();
+                    int talk=sc.nextInt();
+                    while(talk<=0 || talk>10 || g1.getFriends(talk).size()<=1){
+                        System.out.println("Please input valid person. Ensure the speaker has more than one friend.");
+                        talk=sc.nextInt();
+                    }
+                    System.out.println(talk+" has friend of "+g1.getFriends(talk));
                     System.out.println("Who is listening?");
-                    int listen=0;
-                    do{
+                    int listen=sc.nextInt();
+                    while(listen== talk || !g1.getFriends(talk).contains(listen)){
+                        System.out.println("Please ensure speaker is friend with listener.");
                         listen=sc.nextInt();
-                    }while(listen==talk);
+                    }
                     System.out.println("Who is him talking?");
-                    int gossip=0;
-                    do{
+                    int gossip=sc.nextInt();
+                    while(gossip == talk || gossip == listen|| !g1.getFriends(talk).contains(gossip)){
+                        System.out.println("Please ensure speaker is friend with the one been discussed.");
                         gossip=sc.nextInt();
-                    }while(gossip==talk || gossip==listen);
+                    }
                     System.out.println("Is him good? 'true' for yes, 'false' for no.");
                     boolean chitchat=sc.nextBoolean();
                     System.out.println("relative rep point from "+talk+" : ");
@@ -63,7 +70,7 @@ public class S2Assignment<T> {
                     System.out.println("last relative rep point from "+listen+" : ");
                     g1.printEdges(listen);
                     if(!g1.chitchat(talk, listen, gossip, chitchat)){
-                        System.out.println("Oops, invalid person entered. Please ensure person entered is valid and talker knows everyone you entered!");
+                        System.out.println("Oops, invalid person entered. Please ensure person entered is valid and speaker knows everyone you entered!");
                     }else{
                         if(chitchat){
                             System.out.println(talk+" told "+listen+" something good about "+gossip+". Relative rep point increased!");
@@ -106,18 +113,28 @@ public class S2Assignment<T> {
                     MeetCrush go=new MeetCrush(g1);
                     break;
                 case 6:
-                    System.out.println("Input: ");
+                    System.out.println("Number of people: ");
                     int num = sc.nextInt();
                     Friendship f = new Friendship(num+1);
                     for(int i=0; i<num; i++){
-                        f.addEdge(sc.nextInt(), sc.nextInt());
+                        System.out.println("Please enter two people (1-"+num+")");
+                        int first=sc.nextInt();
+                        int second=sc.nextInt();
+                        while(first<0 || first>num || second<0 || second>num || second==first){
+                            System.out.println("Please enter the pair again. ");
+                            first=sc.nextInt();
+                            second = sc.nextInt();
+                        }
+                        System.out.println("Edges formed between "+first+" and "+second+".");
+                        f.addEdge(first, second);
                     }
-                    System.out.println("You can form the following friendship :\n");
+                    System.out.println("You can form the following friendship :");
                     ArrayList<FrienshipList> result=f.Pathlist(1);
                     Collections.sort(result); //to sort from shortest distance to longest distance
                     for(int i=1; i<=result.size(); i++){
                         System.out.println(i+". "+result.get(i-1));
                     }
+                    System.out.println("");
                     break;
                 case 7:
                     System.out.println("-----list with rep points-----");
@@ -134,7 +151,7 @@ public class S2Assignment<T> {
        
     }
     public static void initialization(Group g1){
-        int[] student={1,2,3,4,5,6,7,8,9,10};
+        int[] student={1,2,3,4,5,6,7,9,10};
         for (int i : student)
             g1.addVertex(i);
         g1.addEdge(1, 2, 5, true);
@@ -164,7 +181,7 @@ public class S2Assignment<T> {
         System.out.println("6. See friendship");
         System.out.println("7. See all relationship with rep point");
         System.out.println("------ Enter -1 to quit ------");
-        System.out.println("Enter number of feature you wihsed to execute: ");
+        System.out.println("Enter number of feature you wished to execute: ");
     }
     
     public static int arrangeBook(int size, int[] line){
