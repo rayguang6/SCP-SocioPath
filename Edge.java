@@ -33,9 +33,9 @@ class Edge<T extends Comparable<T>, N extends Comparable<N>> implements Comparab
 
     @Override
     public int compareTo(Edge o) {
-        if(this.rep > o.rep){
+        if(this.rep < o.rep){
             return 1;
-        }else if(this.rep<o.rep){
+        }else if(this.rep>o.rep){
             return -1;
         }else{
             return 0;
