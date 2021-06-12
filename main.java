@@ -7,8 +7,6 @@ package s2assignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -29,11 +27,16 @@ public class S2Assignment<T> {
                 case 1:
                     System.out.println("Who is teaching?");
                     int mentor=sc.nextInt();
+                    while(mentor<=0 || mentor>10){
+                        System.out.println("Please input valid person. ");
+                        mentor=sc.nextInt();
+                    }
                     System.out.println("Who is being teached?");
-                    int mentee=0;
-                    do{
-                    mentee=sc.nextInt();
-                    }while(mentee==mentor);
+                    int mentee=sc.nextInt();
+                    while(mentee==mentor || mentee<=0 || mentee > 10){
+                        System.out.println("Please input valid person. ");
+                        mentee=sc.nextInt();
+                    }
                     System.out.println("Is the teaching good? 'true' for yes, 'false' for no.");
                     boolean good=sc.nextBoolean();
                     if(g1.teachStranger(mentor, mentee, good)){
@@ -90,7 +93,14 @@ public class S2Assignment<T> {
                     System.out.println("Insert people you want to observe.");
                     for(int i=0; i<counter;){
                         int observant=sc.nextInt();
-                        if(observant!=observe){
+                        boolean exist=true;
+                        for(int j=0; j<counter; j++){
+                            if(observant==list[j]){
+                                exist=false;
+                                break;
+                            }
+                        }
+                        if(observant!=observe && observant>=1 && observant<=10 && exist){
                             list[i]=observant;
                             i++;
                         }
@@ -107,7 +117,8 @@ public class S2Assignment<T> {
                     for(int i=0; i<size; i++){
                         line[i]=sc.nextInt();
                     }
-                    System.out.println("Total round required: "+arrangeBook(size, line));
+                    ArrangeBook a=new ArrangeBook(size, line);
+                    System.out.println("Total round required: "+a.getRound());
                     break;
                 case 5:
                     MeetCrush go=new MeetCrush(g1);
@@ -129,7 +140,7 @@ public class S2Assignment<T> {
                         f.addEdge(first, second);
                     }
                     System.out.println("You can form the following friendship :");
-                    ArrayList<FrienshipList> result=f.Pathlist(1);
+                    ArrayList<FriendshipList> result=f.Pathlist(1);
                     Collections.sort(result); //to sort from shortest distance to longest distance
                     for(int i=1; i<=result.size(); i++){
                         System.out.println(i+". "+result.get(i-1));
@@ -183,40 +194,5 @@ public class S2Assignment<T> {
         System.out.println("------ Enter -1 to quit ------");
         System.out.println("Enter number of feature you wished to execute: ");
     }
-    
-    public static int arrangeBook(int size, int[] line){
-        MyStack<Integer> stck=new MyStack<>();
-        boolean action=true;
-        int round=0;
-        while(action){
-            action=false;
-            stck.push(line[0]);
-            /*
-            if book arrangement: 13 16 12 17 15, book on shelf: array; book left on shelf after arrangment:stack
-            first round: 16 17 taken out, left: 13 12 15 (stack)
-            second round: 15 taken out, left: 13 12 (stack)
-            */
-            for(int j=1; j<size; j++){
-                if(line[j]>line[j-1]){
-                    action=true; //if there is book higher than the previous one, book is taken out.
-                }else{
-                    stck.push(line[j]);//is the book is already lower than previous one, no need take out, put to the stack.
-                }
-            }
-            if(action) round++; //if there is books picked out, mean that action had been done, thus round++
-            else break; //if no action taken out, end the loop
-            size=stck.getSize();
-            for(int j=size-1; j>=0; j--){
-                line[j]=stck.pop();
-            } //restoring the book in stack into array for next round of arrangement
-            System.out.print(round+" .  ");
-            for(int j=0; j<size; j++){
-                System.out.print(line[j]+" ");
-            }
-            System.out.println("");
-        }
-        return round;
-    }
-    
     
 }
