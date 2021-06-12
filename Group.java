@@ -12,7 +12,7 @@ import java.util.Arrays;
  *
  * @author doublechin
  */
-public class Group<T extends Comparable<T>, N extends Comparable<N>>{
+public class Group<T extends Comparable<T>, N extends Comparable<N>> implements Cloneable {
 
     Student<T, N> head;
     int size;
@@ -202,17 +202,6 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>>{
         }
     }
 
-    public T getVertex(int pos) {
-        if (pos > size - 1 || pos < 0) {
-            return null;
-        }
-        Student<T, N> temp = head;
-        for (int i = 0; i < pos; i++) {
-            temp = temp.nextVertex;
-        }
-        return temp.vertexInfo;
-    }
-
     public ArrayList<T> getFriends(T v) { //print friends of one
         if (!hasStudent(v)) {
             return null;
@@ -244,7 +233,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>>{
         if (!hasStudent(mentor) || !hasStudent(mentee)) {
             return false;
         }
-        if (getFriends(mentor).contains(mentee)) {
+        if (Group.this.getFriends(mentor).contains(mentee)) {
             return false; //if they are friends, cannot be done
         }
         //modify mentee--->mentor
@@ -278,7 +267,7 @@ public class Group<T extends Comparable<T>, N extends Comparable<N>>{
             return false;
         }
         //basic requirement: talker should know both listener and rumors (safe check)
-        if (!getFriends(talker).contains(listener) || !getFriends(talker).contains(rumors)) {
+        if (!Group.this.getFriends(talker).contains(listener) || !Group.this.getFriends(talker).contains(rumors)) {
             return false;
         }
         int weight = getRep(talker, rumors); 
