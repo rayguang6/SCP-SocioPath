@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author doublechin
  */
 public class FriendshipList implements Comparable<FriendshipList> {
-    ArrayList<Integer> relationship;
+    private ArrayList<Integer> relationship;
     
     public FriendshipList(ArrayList<Integer> i) {
         this.relationship=i;
