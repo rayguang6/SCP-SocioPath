@@ -11,10 +11,10 @@ import java.util.ArrayList;
  *
  * @author doublechin
  */
-public class FrienshipList implements Comparable<FrienshipList> {
+public class FriendshipList implements Comparable<FriendshipList> {
     ArrayList<Integer> relationship;
     
-    public FrienshipList(ArrayList<Integer> i) {
+    public FriendshipList(ArrayList<Integer> i) {
         this.relationship=i;
     }
     
@@ -31,7 +31,7 @@ public class FrienshipList implements Comparable<FrienshipList> {
     }
     
     @Override
-    public int compareTo(FrienshipList o) {
+    public int compareTo(FriendshipList o) {
         //Sorting Way: The one with shortest distance in pathway will be priotised, 
         //if the distance is same, sort according the first node from 1-end
         if(relationship.size()>o.getSize()) return 1;
